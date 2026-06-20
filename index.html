@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockPilot — Inventory Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1116;
+    --panel:#161B22;
+    --panel2:#1C2330;
+    --ink:#E6EAF0;
+    --muted:#838EA3;
+    --amber:#F0A93C;
+    --green:#3FD68A;
+    --red:#F0586B;
+    --line:#262E3B;
+    --blue:#5B8DF6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;}
+  .sidebar{background:var(--panel);border-right:1px solid var(--line);padding:26px 18px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-bottom:30px;}
+  .brand .sq{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--amber),#F6C667);}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:.86rem;color:var(--muted);cursor:pointer;margin-bottom:2px;}
+  .nav-item.active{background:var(--panel2);color:var(--ink);}
+  .nav-item:hover{color:var(--ink);}
+
+  main{padding:28px 32px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+  .topbar h1{font-size:1.4rem;}
+  .topbar p{color:var(--muted);font-size:.83rem;margin-top:4px;}
+  .add-item-btn{background:var(--amber);color:#1A1306;border:none;padding:11px 20px;border-radius:8px;font-weight:600;font-size:.85rem;cursor:pointer;}
+
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;}
+  .stat-label{color:var(--muted);font-size:.78rem;margin-bottom:8px;}
+  .stat-val{font-size:1.5rem;font-weight:700;}
+  .stat-val.warn{color:var(--amber);}
+  .stat-val.danger{color:var(--red);}
+  .stat-val.good{color:var(--green);}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+  .panel-head h3{font-size:1.02rem;}
+  .search-box{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;width:240px;}
+  .search-box input{background:none;border:none;outline:none;color:var(--ink);font-size:.85rem;width:100%;}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th{text-align:left;color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.4px;padding:10px 8px;border-bottom:1px solid var(--line);}
+  td{padding:13px 8px;border-bottom:1px solid var(--line);}
+  tr:hover td{background:rgba(255,255,255,.015);}
+  .sku{color:var(--muted);}
+  .item-cell{display:flex;align-items:center;gap:10px;}
+  .item-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--panel2);}
+  .stock-bar-wrap{display:flex;align-items:center;gap:8px;}
+  .stock-bar{width:60px;height:6px;border-radius:4px;background:var(--line);overflow:hidden;}
+  .stock-bar-fill{height:100%;border-radius:4px;}
+  .badge{padding:3px 10px;border-radius:14px;font-size:.72rem;font-weight:600;}
+  .b-good{background:rgba(63,214,138,.15);color:var(--green);}
+  .b-low{background:rgba(240,169,60,.15);color:var(--amber);}
+  .b-out{background:rgba(240,88,107,.15);color:var(--red);}
+  .qty-btn-row{display:flex;gap:6px;}
+  .qbtn{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer;font-size:.85rem;}
+  .qbtn:hover{border-color:var(--amber);}
+
+  @media(max-width:900px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .stats-row{grid-template-columns:repeat(2,1fr);}
+    table{font-size:.78rem;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="sq"></span> StockPilot</div>
+    <div class="nav-item active">📦 Inventory</div>
+    <div class="nav-item">🧾 Purchase Orders</div>
+    <div class="nav-item">🚚 Suppliers</div>
+    <div class="nav-item">📊 Reports</div>
+    <div class="nav-item">⚙ Settings</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Inventory Overview</h1>
+        <p>Track stock levels, low-stock alerts & supplier reorders in real time.</p>
+      </div>
+      <button class="add-item-btn" onclick="alert('Demo: add-item form would open here.')">+ Add New Item</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total SKUs</div><div class="stat-val">312</div></div>
+      <div class="stat-card"><div class="stat-label">In Stock</div><div class="stat-val good">268</div></div>
+      <div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-val warn">31</div></div>
+      <div class="stat-card"><div class="stat-label">Out of Stock</div><div class="stat-val danger">13</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Stock Items</h3>
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Search by name or SKU...">
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Item</th><th>SKU</th><th>Category</th><th>Stock</th><th>Status</th><th>Unit Price</th><th>Update</th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+const items = [
+  {name:"Wireless Mouse", sku:"WM-1042", icon:"🖱️", cat:"Electronics", stock:142, max:200, price:14.99},
+  {name:"USB-C Cable 1m", sku:"UC-2210", icon:"🔌", cat:"Accessories", stock:28, max:200, price:5.49},
+  {name:"Mechanical Keyboard", sku:"MK-3305", icon:"⌨️", cat:"Electronics", stock:0, max:100, price:49.99},
+  {name:"Laptop Stand", sku:"LS-1187", icon:"💻", cat:"Accessories", stock:76, max:150, price:22.00},
+  {name:"Bluetooth Speaker", sku:"BS-4421", icon:"🔊", cat:"Electronics", stock:19, max:120, price:34.50},
+  {name:"Phone Case (Universal)", sku:"PC-9087", icon:"📱", cat:"Accessories", stock:204, max:300, price:8.99},
+  {name:"Webcam 1080p", sku:"WC-5512", icon:"📷", cat:"Electronics", stock:8, max:80, price:39.00},
+  {name:"Desk Lamp LED", sku:"DL-7734", icon:"💡", cat:"Office", stock:0, max:60, price:18.75},
+  {name:"Notebook A5 (Pack of 3)", sku:"NB-2298", icon:"📓", cat:"Office", stock:156, max:200, price:9.20},
+];
+
+function getStatus(stock, max){
+  const pct = stock/max*100;
+  if(stock===0) return {label:"Out of Stock", cls:"b-out", bar:"#F0586B", pct:2};
+  if(pct<20) return {label:"Low Stock", cls:"b-low", bar:"#F0A93C", pct:pct};
+  return {label:"In Stock", cls:"b-good", bar:"#3FD68A", pct:pct};
+}
+
+function renderTable(filter=''){
+  const body = document.getElementById('invBody');
+  const filtered = items.filter(i =>
+    i.name.toLowerCase().includes(filter.toLowerCase()) || i.sku.toLowerCase().includes(filter.toLowerCase())
+  );
+  body.innerHTML = filtered.map((i, idx) => {
+    const s = getStatus(i.stock, i.max);
+    return `
+    <tr>
+      <td><div class="item-cell"><div class="item-icon">${i.icon}</div>${i.name}</div></td>
+      <td class="sku mono">${i.sku}</td>
+      <td>${i.cat}</td>
+      <td>
+        <div class="stock-bar-wrap">
+          <span class="mono">${i.stock}</span>
+          <div class="stock-bar"><div class="stock-bar-fill" style="width:${s.pct}%;background:${s.bar}"></div></div>
+        </div>
+      </td>
+      <td><span class="badge ${s.cls}">${s.label}</span></td>
+      <td class="mono">$${i.price.toFixed(2)}</td>
+      <td>
+        <div class="qty-btn-row">
+          <button class="qbtn" onclick="updateStock('${i.sku}',-1)">−</button>
+          <button class="qbtn" onclick="updateStock('${i.sku}',1)">+</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">No items found.</td></tr>`;
+}
+
+function updateStock(sku, delta){
+  const item = items.find(i=>i.sku===sku);
+  if(!item) return;
+  item.stock = Math.max(0, Math.min(item.max, item.stock+delta));
+  renderTable(document.getElementById('searchInput').value);
+}
+
+document.getElementById('searchInput').addEventListener('input', e => renderTable(e.target.value));
+renderTable();
+</script>
+</body>
+</html>
