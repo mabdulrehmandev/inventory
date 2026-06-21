@@ -8,49 +8,34 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0E1116;
-    --panel:#161B22;
-    --panel2:#1C2330;
-    --ink:#E6EAF0;
-    --muted:#838EA3;
-    --amber:#F0A93C;
-    --green:#3FD68A;
-    --red:#F0586B;
-    --line:#262E3B;
-    --blue:#5B8DF6;
+    --bg:#0E1116; --panel:#161B22; --panel2:#1C2330; --ink:#E6EAF0; --muted:#838EA3;
+    --amber:#F0A93C; --green:#3FD68A; --red:#F0586B; --line:#262E3B; --blue:#5B8DF6;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
   .mono{font-family:'JetBrains Mono',monospace;}
-
   .app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;}
   .sidebar{background:var(--panel);border-right:1px solid var(--line);padding:26px 18px;}
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-bottom:30px;}
   .brand .sq{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--amber),#F6C667);}
   .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:.86rem;color:var(--muted);cursor:pointer;margin-bottom:2px;}
   .nav-item.active{background:var(--panel2);color:var(--ink);}
-  .nav-item:hover{color:var(--ink);}
-
   main{padding:28px 32px;}
   .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
   .topbar h1{font-size:1.4rem;}
   .topbar p{color:var(--muted);font-size:.83rem;margin-top:4px;}
   .add-item-btn{background:var(--amber);color:#1A1306;border:none;padding:11px 20px;border-radius:8px;font-weight:600;font-size:.85rem;cursor:pointer;}
-
+  .add-item-btn:hover{background:#F6C667;}
   .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
   .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;}
   .stat-label{color:var(--muted);font-size:.78rem;margin-bottom:8px;}
   .stat-val{font-size:1.5rem;font-weight:700;}
-  .stat-val.warn{color:var(--amber);}
-  .stat-val.danger{color:var(--red);}
-  .stat-val.good{color:var(--green);}
-
+  .stat-val.warn{color:var(--amber);} .stat-val.danger{color:var(--red);} .stat-val.good{color:var(--green);}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;}
   .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
   .panel-head h3{font-size:1.02rem;}
   .search-box{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;width:240px;}
   .search-box input{background:none;border:none;outline:none;color:var(--ink);font-size:.85rem;width:100%;}
-
   table{width:100%;border-collapse:collapse;font-size:.85rem;}
   th{text-align:left;color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.4px;padding:10px 8px;border-bottom:1px solid var(--line);}
   td{padding:13px 8px;border-bottom:1px solid var(--line);}
@@ -65,9 +50,27 @@
   .b-good{background:rgba(63,214,138,.15);color:var(--green);}
   .b-low{background:rgba(240,169,60,.15);color:var(--amber);}
   .b-out{background:rgba(240,88,107,.15);color:var(--red);}
-  .qty-btn-row{display:flex;gap:6px;}
+  .qty-btn-row{display:flex;gap:6px;align-items:center;}
   .qbtn{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer;font-size:.85rem;}
   .qbtn:hover{border-color:var(--amber);}
+  .icon-action{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);cursor:pointer;font-size:.78rem;display:flex;align-items:center;justify-content:center;}
+  .icon-action:hover{color:var(--red);border-color:var(--red);}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;width:380px;}
+  .modal h3{margin-bottom:18px;font-size:1.05rem;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;}
+  .field input,.field select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);font-size:.85rem;outline:none;}
+  .field input:focus,.field select:focus{border-color:var(--amber);}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;}
+  .modal-btn{flex:1;padding:11px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;}
+  .modal-btn.primary{background:var(--amber);color:#1A1306;}
+  .modal-btn.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line);}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#06251F;padding:12px 24px;border-radius:30px;font-size:.85rem;font-weight:600;opacity:0;transition:all .3s;z-index:200;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
   @media(max-width:900px){
     .app{grid-template-columns:1fr;}
@@ -94,14 +97,14 @@
         <h1>Inventory Overview</h1>
         <p>Track stock levels, low-stock alerts & supplier reorders in real time.</p>
       </div>
-      <button class="add-item-btn" onclick="alert('Demo: add-item form would open here.')">+ Add New Item</button>
+      <button class="add-item-btn" onclick="openAddModal()">+ Add New Item</button>
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Total SKUs</div><div class="stat-val">312</div></div>
-      <div class="stat-card"><div class="stat-label">In Stock</div><div class="stat-val good">268</div></div>
-      <div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-val warn">31</div></div>
-      <div class="stat-card"><div class="stat-label">Out of Stock</div><div class="stat-val danger">13</div></div>
+      <div class="stat-card"><div class="stat-label">Total SKUs</div><div class="stat-val" id="statTotal">0</div></div>
+      <div class="stat-card"><div class="stat-label">In Stock</div><div class="stat-val good" id="statGood">0</div></div>
+      <div class="stat-card"><div class="stat-label">Low Stock</div><div class="stat-val warn" id="statLow">0</div></div>
+      <div class="stat-card"><div class="stat-label">Out of Stock</div><div class="stat-val danger" id="statOut">0</div></div>
     </div>
 
     <div class="panel">
@@ -113,15 +116,34 @@
         </div>
       </div>
       <table>
-        <thead><tr><th>Item</th><th>SKU</th><th>Category</th><th>Stock</th><th>Status</th><th>Unit Price</th><th>Update</th></tr></thead>
+        <thead><tr><th>Item</th><th>SKU</th><th>Category</th><th>Stock</th><th>Status</th><th>Unit Price</th><th>Update</th><th></th></tr></thead>
         <tbody id="invBody"></tbody>
       </table>
     </div>
   </main>
 </div>
 
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add New Item</h3>
+    <div class="field"><label>Item Name</label><input type="text" id="fName" placeholder="e.g. Wireless Mouse"></div>
+    <div class="field"><label>SKU</label><input type="text" id="fSku" placeholder="e.g. WM-1042"></div>
+    <div class="field"><label>Category</label>
+      <select id="fCat"><option>Electronics</option><option>Accessories</option><option>Office</option></select>
+    </div>
+    <div class="field"><label>Stock Quantity</label><input type="number" id="fStock" placeholder="0"></div>
+    <div class="field"><label>Max Capacity</label><input type="number" id="fMax" placeholder="100"></div>
+    <div class="field"><label>Unit Price ($)</label><input type="number" id="fPrice" step="0.01" placeholder="0.00"></div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
 <script>
-const items = [
+const defaultItems = [
   {name:"Wireless Mouse", sku:"WM-1042", icon:"🖱️", cat:"Electronics", stock:142, max:200, price:14.99},
   {name:"USB-C Cable 1m", sku:"UC-2210", icon:"🔌", cat:"Accessories", stock:28, max:200, price:5.49},
   {name:"Mechanical Keyboard", sku:"MK-3305", icon:"⌨️", cat:"Electronics", stock:0, max:100, price:49.99},
@@ -133,6 +155,12 @@ const items = [
   {name:"Notebook A5 (Pack of 3)", sku:"NB-2298", icon:"📓", cat:"Office", stock:156, max:200, price:9.20},
 ];
 
+const catIcons = {Electronics:"🖥️", Accessories:"🎒", Office:"🗂️"};
+let items = JSON.parse(localStorage.getItem('sp_items') || 'null') || defaultItems;
+let editingSku = null;
+
+function persist(){ localStorage.setItem('sp_items', JSON.stringify(items)); }
+
 function getStatus(stock, max){
   const pct = stock/max*100;
   if(stock===0) return {label:"Out of Stock", cls:"b-out", bar:"#F0586B", pct:2};
@@ -140,16 +168,23 @@ function getStatus(stock, max){
   return {label:"In Stock", cls:"b-good", bar:"#3FD68A", pct:pct};
 }
 
+function renderStats(){
+  document.getElementById('statTotal').textContent = items.length;
+  document.getElementById('statGood').textContent = items.filter(i=>i.stock/i.max>=0.2).length;
+  document.getElementById('statLow').textContent = items.filter(i=>i.stock>0 && i.stock/i.max<0.2).length;
+  document.getElementById('statOut').textContent = items.filter(i=>i.stock===0).length;
+}
+
 function renderTable(filter=''){
   const body = document.getElementById('invBody');
   const filtered = items.filter(i =>
     i.name.toLowerCase().includes(filter.toLowerCase()) || i.sku.toLowerCase().includes(filter.toLowerCase())
   );
-  body.innerHTML = filtered.map((i, idx) => {
+  body.innerHTML = filtered.map(i => {
     const s = getStatus(i.stock, i.max);
     return `
     <tr>
-      <td><div class="item-cell"><div class="item-icon">${i.icon}</div>${i.name}</div></td>
+      <td><div class="item-cell"><div class="item-icon">${i.icon || catIcons[i.cat] || '📦'}</div>${i.name}</div></td>
       <td class="sku mono">${i.sku}</td>
       <td>${i.cat}</td>
       <td>
@@ -166,15 +201,90 @@ function renderTable(filter=''){
           <button class="qbtn" onclick="updateStock('${i.sku}',1)">+</button>
         </div>
       </td>
+      <td>
+        <div class="qty-btn-row">
+          <button class="icon-action" onclick="openEditModal('${i.sku}')" title="Edit">✎</button>
+          <button class="icon-action" onclick="deleteItem('${i.sku}')" title="Delete">🗑</button>
+        </div>
+      </td>
     </tr>`;
-  }).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">No items found.</td></tr>`;
+  }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px;">No items found.</td></tr>`;
+  renderStats();
 }
 
 function updateStock(sku, delta){
   const item = items.find(i=>i.sku===sku);
   if(!item) return;
   item.stock = Math.max(0, Math.min(item.max, item.stock+delta));
+  persist();
   renderTable(document.getElementById('searchInput').value);
+}
+
+function deleteItem(sku){
+  if(!confirm('Delete this item from inventory?')) return;
+  items = items.filter(i=>i.sku!==sku);
+  persist();
+  renderTable(document.getElementById('searchInput').value);
+  showToast('Item deleted');
+}
+
+function openAddModal(){
+  editingSku = null;
+  document.getElementById('modalTitle').textContent = 'Add New Item';
+  document.getElementById('fName').value = '';
+  document.getElementById('fSku').value = '';
+  document.getElementById('fCat').value = 'Electronics';
+  document.getElementById('fStock').value = '';
+  document.getElementById('fMax').value = '';
+  document.getElementById('fPrice').value = '';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function openEditModal(sku){
+  const item = items.find(i=>i.sku===sku);
+  if(!item) return;
+  editingSku = sku;
+  document.getElementById('modalTitle').textContent = 'Edit Item';
+  document.getElementById('fName').value = item.name;
+  document.getElementById('fSku').value = item.sku;
+  document.getElementById('fCat').value = item.cat;
+  document.getElementById('fStock').value = item.stock;
+  document.getElementById('fMax').value = item.max;
+  document.getElementById('fPrice').value = item.price;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+
+function saveItem(){
+  const name = document.getElementById('fName').value.trim();
+  const sku = document.getElementById('fSku').value.trim();
+  const cat = document.getElementById('fCat').value;
+  const stock = parseInt(document.getElementById('fStock').value) || 0;
+  const max = parseInt(document.getElementById('fMax').value) || 100;
+  const price = parseFloat(document.getElementById('fPrice').value) || 0;
+
+  if(!name || !sku){ alert('Please enter item name and SKU.'); return; }
+
+  if(editingSku){
+    const item = items.find(i=>i.sku===editingSku);
+    Object.assign(item, {name, sku, cat, stock, max, price});
+    showToast('Item updated');
+  } else {
+    if(items.find(i=>i.sku===sku)){ alert('SKU already exists.'); return; }
+    items.push({name, sku, cat, stock, max, price});
+    showToast('Item added');
+  }
+  persist();
+  closeModal();
+  renderTable(document.getElementById('searchInput').value);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
 document.getElementById('searchInput').addEventListener('input', e => renderTable(e.target.value));
